@@ -15,14 +15,14 @@ def seed():
     users_data = [
         {'username': 'director', 'name': 'Dr. Caroline Ayuya', 'email': 'director@drice.ac.ke', 'role': 'Director', 'avatar': 'CA'},
         {'username': 'deputy', 'name': 'Dr. Japheth Mursi', 'email': 'deputydirector@drice.ac.ke', 'role': 'Deputy Director', 'avatar': 'JM'},
-        {'username': 'cathy', 'name': 'Cathy Matu', 'email': 'lead1@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'CM'},
+        {'username': 'admin', 'name': 'Philipe Tinega', 'email': 'admin@drice.ac.ke', 'role': 'Admin', 'avatar': 'PT'},
+        {'username': 'innovation', 'name': 'John Nderitu', 'email': 'innovation@drice.ac.ke', 'role': 'Innovation Officer', 'avatar': 'JN'},
+        {'username': 'researcher', 'name': 'Vivian Angula', 'email': 'lead1@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'VA'},
+        {'username': 'analyst', 'name': 'Catherine Matu', 'email': 'analyst@drice.ac.ke', 'role': 'Data Analyst', 'avatar': 'CM'},
         {'username': 'karina', 'name': 'Karina', 'email': 'lead2@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'KK'},
         {'username': 'boyani', 'name': 'Boyani', 'email': 'researcher1@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'BB'},
         {'username': 'kemunto', 'name': 'Kemunto', 'email': 'researcher2@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'KM'},
-        {'username': 'faith', 'name': 'Faith K.', 'email': 'assistant@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'FK'},
-        {'username': 'admin', 'name': 'System Admin', 'email': 'admin@drice.ac.ke', 'role': 'Admin', 'avatar': 'SA'},
-        {'username': 'innovation', 'name': 'Innovation Lead', 'email': 'innovation@drice.ac.ke', 'role': 'Innovation Officer', 'avatar': 'IL'},
-        {'username': 'analyst', 'name': 'Data Analyst', 'email': 'analyst@drice.ac.ke', 'role': 'Data Analyst', 'avatar': 'DA'},
+        {'username': 'faith', 'name': 'Faith K.', 'email': 'assistant@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'FK'},   
     ]
     
     user_map = {}
@@ -48,8 +48,8 @@ def seed():
         {'id': 3, 'title': 'Mental Health Study', 'type': 'Research', 'status': 'At Risk', 'lead': 'karina', 'team': [], 'start': '2024-02-01', 'end': '2024-08-31', 'budget': 150000, 'progress': 25},
         {'id': 4, 'title': 'AI Ethics Training', 'type': 'Training', 'status': 'Completed', 'lead': 'director', 'team': ['deputy', 'cathy', 'karina', 'boyani', 'kemunto'], 'start': '2023-09-01', 'end': '2024-01-31', 'budget': 80000, 'progress': 100},
         {'id': 5, 'title': 'Smart City Traffic Optimization', 'type': 'Innovation', 'status': 'Planning', 'lead': 'innovation', 'team': ['deputy', 'analyst', 'boyani'], 'start': '2026-04-01', 'end': '2027-04-01', 'budget': 1200000, 'progress': 5},
-        {'id': 6, 'title': 'Water Quality Drone Surveillance', 'type': 'Research', 'status': 'Active', 'lead': 'lead1', 'team': ['assistant', 'lead2'], 'start': '2025-06-15', 'end': '2026-10-30', 'budget': 600000, 'progress': 30},
-        {'id': 7, 'title': 'Automated Student Attendance via Biometrics', 'type': 'Pilot', 'status': 'Active', 'lead': 'lead2', 'team': ['lead1'], 'start': '2025-01-10', 'end': '2026-06-30', 'budget': 350000, 'progress': 60},
+        {'id': 6, 'title': 'Water Quality Drone Surveillance', 'type': 'Research', 'status': 'Active', 'lead': 'cathy', 'team': ['faith', 'karina'], 'start': '2025-06-15', 'end': '2026-10-30', 'budget': 600000, 'progress': 30},
+        {'id': 7, 'title': 'Automated Student Attendance via Biometrics', 'type': 'Pilot', 'status': 'Active', 'lead': 'karina', 'team': ['cathy'], 'start': '2025-01-10', 'end': '2026-06-30', 'budget': 350000, 'progress': 60},
         {'id': 8, 'title': 'Machine Learning in Disease Prediction', 'type': 'Research', 'status': 'Planning', 'lead': 'director', 'team': ['deputy', 'analyst'], 'start': '2026-05-01', 'end': '2028-12-31', 'budget': 2500000, 'progress': 0},
     ]
     
@@ -91,6 +91,8 @@ def seed():
         {'id': 1, 'project_id': 1, 'title': 'Complete field data collection', 'assignee': 'boyani', 'due': '2024-02-15', 'status': 'Done', 'priority': 'High'},
         {'id': 2, 'project_id': 1, 'title': 'GIS mapping analysis', 'assignee': 'deputy', 'due': '2024-02-28', 'status': 'In Progress', 'priority': 'High'},
         {'id': 3, 'project_id': 2, 'title': 'Train ML model v2', 'assignee': 'cathy', 'due': '2024-02-10', 'status': 'Overdue', 'priority': 'High'},
+        {'id': 4, 'project_id': 2, 'title': 'Finalize Grant Proposal', 'assignee': 'innovation', 'due': '2026-02-25', 'status': 'To Do', 'priority': 'Urgent'},
+        {'id': 5, 'project_id': 5, 'title': 'Traffic Data Analysis', 'assignee': 'analyst', 'due': '2026-06-01', 'status': 'To Do', 'priority': 'Medium'},
     ]
     for t in tasks_data:
         Task.objects.create(
@@ -102,6 +104,62 @@ def seed():
             status=t['status'],
             priority=t['priority']
         )
+
+    print("Seeding Outputs...")
+    outputs_data = [
+        {
+            'project_id': 1,
+            'title': 'Kibera Sanitation GIS Model v1.0',
+            'type': 'Prototype',
+            'status': 'Approved',
+            'date': '2024-02-10',
+            'authors': ['deputy', 'karina'],
+            'resource_url': 'https://github.com/drice/kibera-gis-model',
+            'resource_type': 'Model'
+        },
+        {
+            'project_id': 2,
+            'title': 'Crop Disease Dataset (Kenya Highands)',
+            'type': 'Dataset',
+            'status': 'Published',
+            'date': '2024-01-20',
+            'authors': ['cathy', 'kemunto'],
+            'resource_url': 'https://datasets.drice.ac.ke/agrismart-crops-kenya.csv',
+            'resource_type': 'Dataset'
+        },
+        {
+            'project_id': 4,
+            'title': 'AI Ethics in Sub-Saharan Research Contexts',
+            'type': 'Paper',
+            'status': 'Published',
+            'date': '2024-01-15',
+            'authors': ['director', 'deputy'],
+            'resource_url': 'https://journal.example.org/ai-ethics-kenya-2024.pdf',
+            'resource_type': 'Paper'
+        },
+        {
+            'project_id': 6,
+            'title': 'Water Quality Drone Surveillance Report',
+            'type': 'Report',
+            'status': 'Draft',
+            'date': '2025-12-01',
+            'authors': ['cathy', 'faith'],
+            'resource_url': 'https://reports.drice.ac.ke/water-quality-drone-q4.pdf',
+            'resource_type': 'Report'
+        }
+    ]
+    for o in outputs_data:
+        out = Output.objects.create(
+            project=project_map[o['project_id']],
+            output_type=o['type'],
+            title=o['title'],
+            status=o['status'],
+            date=o['date'],
+            resource_url=o['resource_url'],
+            resource_type=o['resource_type']
+        )
+        for author in o['authors']:
+            out.authors.add(user_map[author])
 
     print("Seeding Events...")
     # Based on eventSeeds.js
@@ -134,7 +192,7 @@ def seed():
             'category': 'Workshops',
             'stage': 'Confirmed',
             'owner': 'deputy',
-            'attendees': ['lead1', 'lead2', 'researcher1', 'analyst']
+            'attendees': ['cathy', 'karina', 'boyani', 'analyst']
         },
         {
             'title': 'Coffee & Business',
