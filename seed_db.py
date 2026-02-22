@@ -47,6 +47,10 @@ def seed():
         {'id': 2, 'title': 'AgriSmart Crop Detection', 'type': 'Pilot', 'status': 'Active', 'lead': 'cathy', 'team': ['kemunto'], 'start': '2024-03-01', 'end': '2024-09-30', 'budget': 280000, 'progress': 40},
         {'id': 3, 'title': 'Mental Health Study', 'type': 'Research', 'status': 'At Risk', 'lead': 'karina', 'team': [], 'start': '2024-02-01', 'end': '2024-08-31', 'budget': 150000, 'progress': 25},
         {'id': 4, 'title': 'AI Ethics Training', 'type': 'Training', 'status': 'Completed', 'lead': 'director', 'team': ['deputy', 'cathy', 'karina', 'boyani', 'kemunto'], 'start': '2023-09-01', 'end': '2024-01-31', 'budget': 80000, 'progress': 100},
+        {'id': 5, 'title': 'Smart City Traffic Optimization', 'type': 'Innovation', 'status': 'Planning', 'lead': 'innovation', 'team': ['deputy', 'analyst', 'boyani'], 'start': '2026-04-01', 'end': '2027-04-01', 'budget': 1200000, 'progress': 5},
+        {'id': 6, 'title': 'Water Quality Drone Surveillance', 'type': 'Research', 'status': 'Active', 'lead': 'lead1', 'team': ['assistant', 'lead2'], 'start': '2025-06-15', 'end': '2026-10-30', 'budget': 600000, 'progress': 30},
+        {'id': 7, 'title': 'Automated Student Attendance via Biometrics', 'type': 'Pilot', 'status': 'Active', 'lead': 'lead2', 'team': ['lead1'], 'start': '2025-01-10', 'end': '2026-06-30', 'budget': 350000, 'progress': 60},
+        {'id': 8, 'title': 'Machine Learning in Disease Prediction', 'type': 'Research', 'status': 'Planning', 'lead': 'director', 'team': ['deputy', 'analyst'], 'start': '2026-05-01', 'end': '2028-12-31', 'budget': 2500000, 'progress': 0},
     ]
     
     project_map = {}
@@ -111,6 +115,56 @@ def seed():
             'stage': 'Confirmed',
             'owner': 'boyani',
             'attendees': ['director', 'deputy', 'cathy', 'karina', 'boyani', 'kemunto']
+        },
+        {
+            'title': 'Social Entrepreneurship Event',
+            'description': 'Exploring social entrepreneurship models and opportunities',
+            'start': '2026-03-26T10:00:00Z',
+            'end': '2026-03-26T16:00:00Z',
+            'category': 'Workshops',
+            'stage': 'Confirmed',
+            'owner': 'innovation',
+            'attendees': ['director', 'cathy', 'innovation']
+        },
+        {
+            'title': 'Startup Garage',
+            'description': 'Hands-on startup mentoring and business development workshop',
+            'start': '2026-03-27T13:00:00Z',
+            'end': '2026-03-27T17:00:00Z',
+            'category': 'Workshops',
+            'stage': 'Confirmed',
+            'owner': 'deputy',
+            'attendees': ['lead1', 'lead2', 'researcher1', 'analyst']
+        },
+        {
+            'title': 'Coffee & Business',
+            'description': 'Casual networking and business development session',
+            'start': '2026-04-11T08:30:00Z',
+            'end': '2026-04-11T10:30:00Z',
+            'category': 'Conferences & Workshops',
+            'stage': 'Planning',
+            'owner': 'director',
+            'attendees': ['director', 'deputy']
+        },
+        {
+            'title': 'Innovation Grant Submission',
+            'description': 'Final submission deadline for the AgriTech Innovation Grant',
+            'start': '2026-02-23T23:59:00Z',
+            'end': '2026-02-23T23:59:00Z',
+            'category': 'Grant Deadlines & Research Milestones',
+            'stage': 'Confirmed',
+            'owner': 'deputy',
+            'attendees': ['deputy', 'cathy', 'kemunto']
+        },
+        {
+            'title': 'Quarterly Research Review',
+            'description': 'All-hands meeting to review research milestones and budget usage',
+            'start': '2026-05-01T14:00:00Z',
+            'end': '2026-05-01T16:00:00Z',
+            'category': 'Academic Milestones',
+            'stage': 'Planning',
+            'owner': 'admin',
+            'attendees': ['director', 'deputy', 'cathy', 'karina', 'boyani', 'kemunto', 'faith', 'innovation', 'analyst']
         }
     ]
     for ev in events_data:
