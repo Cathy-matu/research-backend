@@ -12,6 +12,7 @@ from .models import GoogleCredentials
 # Define the scopes required for our app
 SCOPES = [
     'https://www.googleapis.com/auth/calendar.events',
+    'https://www.googleapis.com/auth/userinfo.email',
 ]
 
 def get_google_oauth_flow(state=None):
@@ -50,10 +51,12 @@ class GoogleLoginView(APIView):
         flow = get_google_oauth_flow()
         
         # We enforce "offline" access to receive a refresh token so we can sync in the background
+        # We also enforce the 'hd' (Hosted Domain) parameter so Google only allows @drice.ac.ke accounts
         authorization_url, state = flow.authorization_url(
             access_type='offline',
             include_granted_scopes='true',
-            prompt='consent' # Forces Google to always return a refresh_token
+            prompt='consent', # Forces Google to always return a refresh_token
+            hd='drice.ac.ke'
         )
         
         # Store state and the user ID in the session or a cache to verify upon callback
@@ -97,6 +100,20 @@ class GoogleCallbackView(APIView):
 
             flow.fetch_token(authorization_response=authorization_response)
             credentials = flow.credentials
+
+            # Fetch the user's Google Profile to verify their email domain
+            import requests
+            user_info_response = requests.get(
+                'https://www.googleapis.com/oauth2/v2/userinfo',
+                headers={'Authorization': f'Bearer {credentials.token}'}
+            )
+            
+            if user_info_response.status_code == 200:
+                google_email = user_info_response.json().get('email', '')
+                if not google_email.endswith('@drice.ac.ke'):
+                    # Revoke the token since it's an invalid domain, then return error
+                    requests.post('https://oauth2.googleapis.com/revoke', params={'token': credentials.token})
+                    return Response({'error': 'Only @drice.ac.ke Google Workspace accounts are allowed.'}, status=status.HTTP_403_FORBIDDEN)
 
             # Save the credentials to the database for this user
             from core.models import User
