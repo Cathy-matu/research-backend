@@ -1,65 +1,89 @@
 import os
-from O365 import Account, MSGraphProtocol
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from .models import GoogleCredentials
 from django.conf import settings
 from datetime import datetime
 
-class MicrosoftGraphService:
-    def __init__(self):
-        self.client_id = os.getenv('MS_GRAPH_CLIENT_ID')
-        self.client_secret = os.getenv('MS_GRAPH_CLIENT_SECRET')
-        self.tenant_id = os.getenv('MS_GRAPH_TENANT_ID')
+class GoogleCalendarService:
+    def __init__(self, user):
+        """
+        Initialize the service with a specific user's GoogleCredentials.
+        """
+        self.user = user
+        self.creds = None
         
-        self.credentials = (self.client_id, self.client_secret)
-        self.protocol = MSGraphProtocol()
-        self.account = Account(self.credentials, tenant_id=self.tenant_id, protocol=self.protocol)
+        try:
+            google_creds = GoogleCredentials.objects.get(user=self.user)
+            if google_creds.creds_json:
+                self.creds = Credentials.from_authorized_user_info(google_creds.creds_json)
+        except GoogleCredentials.DoesNotExist:
+            self.creds = None
 
-    def authenticate(self):
-        """
-        Handle OAuth2 authentication. 
-        In a production environment, this would involve redirecting the user.
-        For backend-to-backend (daemon) integration, we use client credentials.
-        """
-        if not self.account.is_authenticated:
-            # This is a simplified version for common research use-cases
-            # In a real app, you'd store tokens in a database per user
-            return self.account.authenticate(scopes=['https://graph.microsoft.com/.default'])
-        return True
+    def is_authenticated(self):
+        return self.creds is not None and self.creds.valid
 
     def sync_event(self, event_data):
         """
-        Sync a local Event model to Outlook.
+        Sync a local Event model to Google Calendar.
         """
-        schedule = self.account.schedule()
-        calendar = schedule.get_default_calendar()
+        if not self.is_authenticated():
+            raise Exception(f"User {self.user.username} is not authenticated with Google Calendar.")
+
+        service = build('calendar', 'v3', credentials=self.creds)
         
-        new_event = calendar.new_event()
-        new_event.subject = event_data.title
-        new_event.location = event_data.location
-        new_event.body = event_data.description
-        new_event.start = event_data.start_date
-        new_event.end = event_data.end_date
-        
+        # Prepare attendees
+        attendees = []
         if event_data.attendees.exists():
             for attendee in event_data.attendees.all():
-                new_event.attendees.add(attendee.email)
+                attendees.append({'email': attendee.email})
+
+        event_body = {
+            'summary': event_data.title,
+            'location': event_data.location,
+            'description': event_data.description,
+            'start': {
+                'dateTime': event_data.start_date.isoformat(),
+                'timeZone': 'UTC',
+            },
+            'end': {
+                'dateTime': event_data.end_date.isoformat(),
+                'timeZone': 'UTC',
+            },
+            'attendees': attendees,
+        }
+
+        # If it already has a Google Event ID, update it. Otherwise, create new.
+        if event_data.google_event_id:
+            try:
+                event = service.events().update(
+                    calendarId='primary', 
+                    eventId=event_data.google_event_id, 
+                    body=event_body
+                ).execute()
+            except Exception as e:
+                # Fallback to create if the ID is invalid or deleted remotely
+                event = service.events().insert(calendarId='primary', body=event_body).execute()
+        else:
+            event = service.events().insert(calendarId='primary', body=event_body).execute()
+
+        # Update the local Event record with Google's identifiers
+        event_data.google_event_id = event.get('id')
+        event_data.google_calendar_link = event.get('htmlLink')
+        event_data.save()
         
-        new_event.save()
-        return new_event.ical_uid
+        return event
 
-    def send_email(self, subject, body, recipient_email):
+    def delete_event(self, google_event_id):
         """
-        Send an email via Outlook (e.g., for "Ask Team Lead" fallback).
+        Delete an event from Google Calendar.
         """
-        m = self.account.new_message()
-        m.to.add(recipient_email)
-        m.subject = subject
-        m.body = body
-        return m.send()
-
-    def get_messages(self, limit=10):
-        """
-        Retrieve recent messages (for syncing back or checking responses).
-        """
-        mailbox = self.account.mailbox()
-        messages = mailbox.get_messages(limit=limit)
-        return messages
+        if not self.is_authenticated() or not google_event_id:
+            return False
+            
+        service = build('calendar', 'v3', credentials=self.creds)
+        try:
+            service.events().delete(calendarId='primary', eventId=google_event_id).execute()
+            return True
+        except Exception:
+            return False

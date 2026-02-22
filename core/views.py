@@ -9,7 +9,7 @@ from .serializers import (
 )
 from .permissions import IsDirectorOrDeputy, IsAdmin, IsOwnerOrStaff
 from .reports import ReportGenerator
-from integration.services import MicrosoftGraphService
+from integration.services import GoogleCalendarService
 
 class UserMeView(generics.RetrieveAPIView):
     """Returns the profile and role of the currently authenticated user."""
@@ -66,20 +66,36 @@ class MessageViewSet(viewsets.ModelViewSet):
         return super().get_queryset().filter(Q(sender=user) | Q(receiver=user))
 
     @action(detail=True, methods=['post'])
-    def send_to_outlook(self, request, pk=None):
-        message = self.get_object()
-        ms_graph = MicrosoftGraphService()
-        try:
-            ms_graph.send_email(
-                subject=f"Leadership Query: {message.subject}",
-                body=message.content,
-                recipient_email=message.receiver.email
-            )
-            return Response({'status': 'Email sent successfully via Outlook'})
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def send_to_email(self, request, pk=None):
+        return Response({'status': 'Email forwarding via Google is not yet implemented.'}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.select_related('owner', 'linked_project').prefetch_related('attendees').all()
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def _sync_to_google(self, event):
+        service = GoogleCalendarService(event.owner)
+        if service.is_authenticated():
+            try:
+                service.sync_event(event)
+            except Exception as e:
+                # Log error but allow local save to succeed so we don't block the UI
+                print(f"Failed to sync to Google Calendar: {e}")
+
+    def perform_create(self, serializer):
+        event = serializer.save()
+        self._sync_to_google(event)
+
+    def perform_update(self, serializer):
+        event = serializer.save()
+        self._sync_to_google(event)
+
+    def perform_destroy(self, instance):
+        service = GoogleCalendarService(instance.owner)
+        if getattr(instance, 'google_event_id', None) and service.is_authenticated():
+            try:
+                service.delete_event(instance.google_event_id)
+            except Exception as e:
+                print(f"Failed to delete from Google Calendar: {e}")
+        instance.delete()
