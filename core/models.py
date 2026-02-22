@@ -140,6 +140,8 @@ class Output(models.Model):
     date = models.DateField()
     authors = models.ManyToManyField(User, related_name='outputs')
     frequency = models.CharField(max_length=50, blank=True) # e.g. Monthly, Weekly
+    resource_url = models.URLField(max_length=500, blank=True, null=True)
+    resource_type = models.CharField(max_length=50, blank=True, null=True) # e.g. Model, Paper, Dataset, Prototype
 
     class Meta:
         indexes = [
