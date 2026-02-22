@@ -61,13 +61,20 @@ class ProjectSerializer(serializers.ModelSerializer):
     def get_team_names(self, obj):
         return [user.get_full_name() for user in obj.team.all()]
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        if request and request.user.role in ['Research Assistant', 'Data Analyst']:
+            representation.pop('budget', None)
+        return representation
+
 class OutputSerializer(serializers.ModelSerializer):
     project_title = serializers.ReadOnlyField(source='project.title')
     author_names = serializers.SerializerMethodField()
     
     class Meta:
         model = Output
-        fields = ['id', 'project', 'project_title', 'output_type', 'title', 'status', 'date', 'authors', 'author_names', 'frequency']
+        fields = ['id', 'project', 'project_title', 'output_type', 'title', 'status', 'date', 'authors', 'author_names', 'frequency', 'resource_url', 'resource_type']
 
     def get_author_names(self, obj):
         return [user.get_full_name() for user in obj.authors.all()]
