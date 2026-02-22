@@ -195,6 +195,8 @@ class Event(models.Model):
     linked_project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    google_event_id = models.CharField(max_length=255, blank=True, null=True)
+    google_calendar_link = models.URLField(max_length=500, blank=True, null=True)
 
     class Meta:
         indexes = [
