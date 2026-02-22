@@ -37,7 +37,11 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAuthenticated(), IsDirectorOrDeputy() | IsAdmin()]
+        return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
         user = self.request.user
