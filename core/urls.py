@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    UserMeView, UserViewSet, ProjectViewSet, TaskViewSet, 
+    UserMeView, ChangePasswordView, UserViewSet, ProjectViewSet, TaskViewSet, 
     PartnerViewSet, OutputViewSet, MessageViewSet, EventViewSet
 )
 
@@ -16,5 +16,6 @@ router.register(r'events', EventViewSet)
 
 urlpatterns = [
     path('me/', UserMeView.as_view(), name='user-me'),
+    path('users/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('', include(router.urls)),
 ]

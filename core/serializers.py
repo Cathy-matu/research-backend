@@ -4,7 +4,7 @@ from .models import User, Project, Task, SubTask, Partner, Output, Message, Even
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'avatar', 'password']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'avatar', 'password', 'force_password_change']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -14,6 +14,15 @@ class UserSerializer(serializers.ModelSerializer):
             user.set_password(password)
             user.save()
         return user
+
+class ChangePasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(write_only=True, required=True, min_length=8)
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.force_password_change = False
+        instance.save()
+        return instance
 
 class SubTaskSerializer(serializers.ModelSerializer):
     class Meta:

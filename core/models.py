@@ -18,6 +18,7 @@ class User(AbstractUser):
     )
     role = models.CharField(max_length=50, choices=ROLES, default='Research Assistant')
     avatar = models.CharField(max_length=2, blank=True)  # Initials as seen in frontend
+    force_password_change = models.BooleanField(default=True)
 
     class Meta:
         indexes = [

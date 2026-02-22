@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from .models import User, Project, Task, Partner, Output, Message, Event
 from .serializers import (
     UserSerializer, ProjectSerializer, TaskSerializer, 
-    PartnerSerializer, OutputSerializer, MessageSerializer, EventSerializer
+    PartnerSerializer, OutputSerializer, MessageSerializer, EventSerializer, ChangePasswordSerializer
 )
 from .permissions import IsDirectorOrDeputy, IsAdmin, IsOwnerOrStaff
 from .reports import ReportGenerator
@@ -14,6 +14,14 @@ from integration.services import GoogleCalendarService
 class UserMeView(generics.RetrieveAPIView):
     """Returns the profile and role of the currently authenticated user."""
     serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+class ChangePasswordView(generics.UpdateAPIView):
+    """Allows an authenticated user to change their password and disable the force flag."""
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
