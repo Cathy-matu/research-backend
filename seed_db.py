@@ -31,7 +31,7 @@ def seed():
         first_name = names[0]
         last_name = ' '.join(names[1:]) if len(names) > 1 else ''
         user = User.objects.create_user(
-            username=u['username'],
+            username=u['email'],
             email=u['email'],
             password='password123',
             first_name=first_name,
@@ -130,11 +130,11 @@ def seed():
     print("\n" + "="*50)
     print("USER LOGIN CREDENTIALS")
     print("="*50)
-    print(f"{'Role':<20} | {'Username':<15} | {'Password'}")
-    print("-" * 50)
+    print(f"{'Role':<20} | {'Email/Username':<25} | {'Password'}")
+    print("-" * 65)
     for u in users_data:
-        print(f"{u['role']:<20} | {u['username']:<15} | password123")
-    print("="*50 + "\n")
+        print(f"{u['role']:<20} | {u['email']:<25} | password123")
+    print("="*65 + "\n")
 
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
