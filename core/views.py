@@ -31,14 +31,20 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     
     def get_permissions(self):
-        if self.action == 'create':
-            return [AllowAny()]
-        return [permissions.IsAuthenticated(), IsAdmin()]
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAuthenticated(), IsAdmin()]
+        return [permissions.IsAuthenticated()]
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.select_related('lead').prefetch_related('team').all()
     serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticated, IsDirectorOrDeputy | IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Project.objects.select_related('lead').prefetch_related('team').all()
+        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer']:
+            return queryset
+        return queryset.filter(Q(lead=user) | Q(team=user)).distinct()
 
     @action(detail=True, methods=['get'])
     def generate_report(self, request, pk=None):
@@ -48,39 +54,62 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
 
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.select_related('assignee', 'project').prefetch_related('subtasks', 'dependencies').all()
     serializer_class = TaskSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrStaff | IsDirectorOrDeputy | IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Task.objects.select_related('assignee', 'project').prefetch_related('subtasks', 'dependencies').all()
+        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer']:
+            return queryset
+        return queryset.filter(Q(assignee=user) | Q(project__lead=user) | Q(project__team=user)).distinct()
 
 class PartnerViewSet(viewsets.ModelViewSet):
-    queryset = Partner.objects.select_related('project').all()
     serializer_class = PartnerSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Partner.objects.select_related('project').all()
+        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer']:
+            return queryset
+        return queryset.filter(Q(project__lead=user) | Q(project__team=user)).distinct()
+
 class OutputViewSet(viewsets.ModelViewSet):
-    queryset = Output.objects.select_related('project').prefetch_related('authors').all()
     serializer_class = OutputSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Output.objects.select_related('project').prefetch_related('authors').all()
+        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer']:
+            return queryset
+        return queryset.filter(Q(authors=user) | Q(project__lead=user) | Q(project__team=user)).distinct()
 
 from django.db.models import Q
 
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.select_related('sender', 'receiver', 'project').prefetch_related('replies').all()
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrStaff]
+    permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
         user = self.request.user
-        return super().get_queryset().filter(Q(sender=user) | Q(receiver=user))
+        return Message.objects.select_related('sender', 'receiver', 'project').prefetch_related('replies').filter(Q(sender=user) | Q(receiver=user)).distinct()
 
     @action(detail=True, methods=['post'])
     def send_to_email(self, request, pk=None):
         return Response({'status': 'Email forwarding via Google is not yet implemented.'}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
 class EventViewSet(viewsets.ModelViewSet):
-    queryset = Event.objects.select_related('owner', 'linked_project').prefetch_related('attendees').all()
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Event.objects.select_related('owner', 'linked_project').prefetch_related('attendees').all()
+        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer']:
+            return queryset
+        return queryset.filter(Q(owner=user) | Q(attendees=user) | Q(linked_project__lead=user) | Q(linked_project__team=user)).distinct()
 
     def _sync_to_google(self, event):
         service = GoogleCalendarService(event.owner)

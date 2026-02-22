@@ -6,13 +6,13 @@ from .views import (
 )
 
 router = DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'projects', ProjectViewSet)
-router.register(r'tasks', TaskViewSet)
-router.register(r'partners', PartnerViewSet)
-router.register(r'outputs', OutputViewSet)
-router.register(r'messages', MessageViewSet)
-router.register(r'events', EventViewSet)
+router.register(r'users', UserViewSet, basename='user')
+router.register(r'projects', ProjectViewSet, basename='project')
+router.register(r'tasks', TaskViewSet, basename='task')
+router.register(r'partners', PartnerViewSet, basename='partner')
+router.register(r'outputs', OutputViewSet, basename='output')
+router.register(r'messages', MessageViewSet, basename='message')
+router.register(r'events', EventViewSet, basename='event')
 
 urlpatterns = [
     path('me/', UserMeView.as_view(), name='user-me'),
