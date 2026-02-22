@@ -78,12 +78,16 @@ DATABASES = {
     }
 }
 
-if os.getenv('POSTGRES_URL') or os.getenv('DATABASE_URL'):
-    DATABASES['default'] = dj_database_url.config(
-        default=os.getenv('POSTGRES_URL') or os.getenv('DATABASE_URL'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
+db_url = os.getenv('POSTGRES_URL') or os.getenv('DATABASE_URL')
+if db_url and db_url.strip():
+    try:
+        DATABASES['default'] = dj_database_url.config(
+            default=db_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    except Exception as e:
+        print(f"Failed to parse DATABASE_URL: {e}")
 
 
 # Password validation
