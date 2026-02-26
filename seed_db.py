@@ -17,12 +17,10 @@ def seed():
         {'username': 'deputy', 'name': 'Dr. Japheth Mursi', 'email': 'deputydirector@drice.ac.ke', 'role': 'Deputy Director', 'avatar': 'JM'},
         {'username': 'admin', 'name': 'Philipe Tinega', 'email': 'admin@drice.ac.ke', 'role': 'Admin', 'avatar': 'PT'},
         {'username': 'innovation', 'name': 'John Nderitu', 'email': 'innovation@drice.ac.ke', 'role': 'Innovation Officer', 'avatar': 'JN'},
-        {'username': 'researcher', 'name': 'Vivian Angula', 'email': 'lead1@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'VA'},
+        {'username': 'researcher', 'name': 'Vivian Angula', 'email': 'researcher2@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'VA'},
         {'username': 'analyst', 'name': 'Catherine Matu', 'email': 'analyst@drice.ac.ke', 'role': 'Data Analyst', 'avatar': 'CM'},
-        {'username': 'karina', 'name': 'Karina', 'email': 'lead2@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'KK'},
-        {'username': 'boyani', 'name': 'Boyani', 'email': 'researcher1@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'BB'},
-        {'username': 'kemunto', 'name': 'Kemunto', 'email': 'researcher2@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'KM'},
-        {'username': 'faith', 'name': 'Faith K.', 'email': 'assistant@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'FK'},   
+        {'username': 'karina', 'name': 'Karina Mureithi', 'email': 'researcher3@drice.ac.ke', 'role': 'Research Assistant', 'avatar': 'KM'},
+        {'username': 'boyani', 'name': 'Maryleen Boyani', 'email': 'researcher1@drice.ac.ke','role': 'Research Assistant', 'avatar': 'MB'},
     ]
     
     user_map = {}
