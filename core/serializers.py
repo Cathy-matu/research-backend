@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Project, Task, SubTask, Partner, Output, Message, Event
+from .models import User, Project, Task, SubTask, Partner, Output, Message, Event, Innovator, Idea
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -104,3 +104,19 @@ class EventSerializer(serializers.ModelSerializer):
             'pipeline_stage', 'location', 'owner', 'owner_name', 'attendees', 
             'attendee_details', 'max_attendees', 'linked_project', 'created_at'
         ]
+
+class InnovatorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Innovator
+        fields = '__all__'
+
+class IdeaSerializer(serializers.ModelSerializer):
+    project_id = serializers.PrimaryKeyRelatedField(
+        queryset=Project.objects.all(), source='project', required=False, allow_null=True
+    )
+    
+    class Meta:
+        model = Idea
+        fields = ['id', 'owner_name', 'project_title', 'email', 'phone', 'project', 'project_id', 'projects_desc', 'created_at']
+        extra_kwargs = {'project': {'read_only': True}}
+

@@ -2,10 +2,11 @@ from rest_framework import viewsets, permissions, generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import User, Project, Task, Partner, Output, Message, Event
+from .models import User, Project, Task, Partner, Output, Message, Event, Innovator, Idea
 from .serializers import (
     UserSerializer, ProjectSerializer, TaskSerializer, 
-    PartnerSerializer, OutputSerializer, MessageSerializer, EventSerializer, ChangePasswordSerializer
+    PartnerSerializer, OutputSerializer, MessageSerializer, EventSerializer, ChangePasswordSerializer,
+    InnovatorSerializer, IdeaSerializer
 )
 from .permissions import IsDirectorOrDeputy, IsAdmin, IsOwnerOrStaff
 from .reports import ReportGenerator
@@ -46,7 +47,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         queryset = Project.objects.select_related('lead').prefetch_related('team').all()
-        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer']:
+        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer', 'Data Analyst']:
             return queryset
         return queryset.filter(Q(lead=user) | Q(team=user)).distinct()
 
@@ -64,7 +65,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         queryset = Task.objects.select_related('assignee', 'project').prefetch_related('subtasks', 'dependencies').all()
-        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer']:
+        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer', 'Data Analyst']:
             return queryset
         return queryset.filter(Q(assignee=user) | Q(project__lead=user) | Q(project__team=user)).distinct()
 
@@ -75,7 +76,7 @@ class PartnerViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         queryset = Partner.objects.select_related('project').all()
-        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer']:
+        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer', 'Data Analyst']:
             return queryset
         return queryset.filter(Q(project__lead=user) | Q(project__team=user)).distinct()
 
@@ -86,7 +87,7 @@ class OutputViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         queryset = Output.objects.select_related('project').prefetch_related('authors').all()
-        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer']:
+        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer', 'Data Analyst']:
             return queryset
         return queryset.filter(Q(authors=user) | Q(project__lead=user) | Q(project__team=user)).distinct()
 
@@ -111,7 +112,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         queryset = Event.objects.select_related('owner', 'linked_project').prefetch_related('attendees').all()
-        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer']:
+        if user.role in ['Admin', 'Director', 'Deputy Director', 'Innovation Officer', 'Data Analyst']:
             return queryset
         return queryset.filter(Q(owner=user) | Q(attendees=user) | Q(linked_project__lead=user) | Q(linked_project__team=user)).distinct()
 
@@ -140,3 +141,14 @@ class EventViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 print(f"Failed to delete from Google Calendar: {e}")
         instance.delete()
+
+class InnovatorViewSet(viewsets.ModelViewSet):
+    serializer_class = InnovatorSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Innovator.objects.all()
+
+class IdeaViewSet(viewsets.ModelViewSet):
+    serializer_class = IdeaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Idea.objects.all()
+

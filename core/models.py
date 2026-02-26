@@ -206,3 +206,21 @@ class Event(models.Model):
             models.Index(fields=['start_date']),
             models.Index(fields=['pipeline_stage']),
         ]
+
+class Innovator(models.Model):
+    name = models.CharField(max_length=255)
+    year = models.CharField(max_length=50)
+    email = models.EmailField()
+    language1 = models.CharField(max_length=100, blank=True)
+    language2 = models.CharField(max_length=100, blank=True)
+    language3 = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Idea(models.Model):
+    owner_name = models.CharField(max_length=255)
+    project_title = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=50, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True)
+    projects_desc = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
