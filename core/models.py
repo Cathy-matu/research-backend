@@ -75,8 +75,9 @@ class Partner(models.Model):
     sector = models.CharField(max_length=50, choices=SECTOR_CHOICES)
     contact = models.CharField(max_length=255)
     email = models.EmailField()
+    phone = models.CharField(max_length=50, blank=True)
     engagement = models.CharField(max_length=20, choices=ENGAGEMENT_CHOICES)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='partners')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='partners', null=True, blank=True)
 
     class Meta:
         indexes = [
@@ -211,9 +212,7 @@ class Innovator(models.Model):
     name = models.CharField(max_length=255)
     year = models.CharField(max_length=50)
     email = models.EmailField()
-    language1 = models.CharField(max_length=100, blank=True)
-    language2 = models.CharField(max_length=100, blank=True)
-    language3 = models.CharField(max_length=100, blank=True)
+    idea = models.ForeignKey('Idea', on_delete=models.SET_NULL, null=True, blank=True, related_name='innovators')
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Idea(models.Model):

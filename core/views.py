@@ -11,6 +11,26 @@ from .serializers import (
 from .permissions import IsDirectorOrDeputy, IsAdmin, IsOwnerOrStaff
 from .reports import ReportGenerator
 from integration.services import GoogleCalendarService
+from django.core.mail import send_mail
+from django.conf import settings
+import threading
+
+def send_email_async(subject, message, recipient_list):
+    """Utility to send emails without blocking the main thread"""
+    def send():
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                recipient_list,
+                fail_silently=True,
+            )
+        except Exception as e:
+            print(f"Async email sending failed: {e}")
+            
+    thread = threading.Thread(target=send)
+    thread.start()
 
 class UserMeView(generics.RetrieveAPIView):
     """Returns the profile and role of the currently authenticated user."""
@@ -101,6 +121,18 @@ class MessageViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Message.objects.select_related('sender', 'receiver', 'project').prefetch_related('replies').filter(Q(sender=user) | Q(receiver=user)).distinct()
 
+    def perform_create(self, serializer):
+        message = serializer.save()
+        
+        # Send Email Notification
+        subject = f"New Message: {message.subject}"
+        body = f"Hello {message.receiver.first_name or message.receiver.username},\n\nYou have received a new message from {message.sender.first_name or message.sender.username}.\n\nPriority: {message.priority}\n\nMessage:\n{message.content}\n\nPlease check your dashboard for more details."
+        
+        send_email_async(
+            subject=subject,
+            message=body,
+            recipient_list=[message.receiver.email]
+        )
     @action(detail=True, methods=['post'])
     def send_to_email(self, request, pk=None):
         return Response({'status': 'Email forwarding via Google is not yet implemented.'}, status=status.HTTP_501_NOT_IMPLEMENTED)
@@ -128,10 +160,31 @@ class EventViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         event = serializer.save()
         self._sync_to_google(event)
+        self._send_event_invites(event, is_update=False)
 
     def perform_update(self, serializer):
         event = serializer.save()
         self._sync_to_google(event)
+        self._send_event_invites(event, is_update=True)
+        
+    def _send_event_invites(self, event, is_update=False):
+        attendees = event.attendees.all()
+        if not attendees.exists():
+            return
+            
+        emails = [user.email for user in attendees if user.email]
+        if not emails:
+            return
+            
+        action = "Updated" if is_update else "New"
+        subject = f"{action} Event Invitation: {event.title}"
+        body = f"Hello,\n\nYou have been invited to a {action.lower()} event.\n\nTitle: {event.title}\nDescription: {event.description}\nStart: {event.start_date}\nEnd: {event.end_date}\nLocation: {event.location}\n\nPlease check your dashboard for more details."
+        
+        send_email_async(
+            subject=subject,
+            message=body,
+            recipient_list=emails
+        )
 
     def perform_destroy(self, instance):
         service = GoogleCalendarService(instance.owner)

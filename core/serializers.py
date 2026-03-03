@@ -45,7 +45,7 @@ class PartnerSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Partner
-        fields = ['id', 'name', 'sector', 'contact', 'email', 'engagement', 'project', 'project_title']
+        fields = ['id', 'name', 'sector', 'contact', 'email', 'phone', 'engagement', 'project', 'project_title']
 
 class ProjectSerializer(serializers.ModelSerializer):
     lead_name = serializers.ReadOnlyField(source='lead.get_full_name')
@@ -106,9 +106,11 @@ class EventSerializer(serializers.ModelSerializer):
         ]
 
 class InnovatorSerializer(serializers.ModelSerializer):
+    idea_title = serializers.ReadOnlyField(source='idea.project_title')
+
     class Meta:
         model = Innovator
-        fields = '__all__'
+        fields = ['id', 'name', 'year', 'email', 'idea', 'idea_title', 'created_at']
 
 class IdeaSerializer(serializers.ModelSerializer):
     project_id = serializers.PrimaryKeyRelatedField(
