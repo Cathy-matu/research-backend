@@ -45,15 +45,15 @@ def seed():
     print("Seeding Projects...")
     projects_data = [
         {'id': 1, 'title': 'Kibera Sanitation Mapping', 'type': 'Research', 'status': 'Active', 'lead': 'deputy', 'team': ['karina', 'boyani', 'kemunto', 'faith', 'researcher'], 'start': '2026-01-15', 'end': '2026-12-31', 'budget': 450000, 'progress': 65},
-        {'id': 2, 'title': 'AgriSmart Crop Detection', 'type': 'Pilot', 'status': 'Active', 'lead': 'cathy', 'team': [], 'start': '2026-03-01', 'end': '2026-09-30', 'budget': 280000, 'progress': 40},
+        {'id': 2, 'title': 'AgriSmart Crop Detection', 'type': 'Pilot', 'status': 'Active', 'lead': 'cathy', 'team': ['boyani'], 'start': '2026-03-01', 'end': '2026-09-30', 'budget': 280000, 'progress': 40},
         {'id': 3, 'title': 'Mental Health Study', 'type': 'Research', 'status': 'At Risk', 'lead': 'analyst', 'team': [], 'start': '2026-02-01', 'end': '2026-08-31', 'budget': 150000, 'progress': 25},
         {'id': 4, 'title': 'AI Ethics Training', 'type': 'Training', 'status': 'Completed', 'lead': 'director', 'team': ['deputy', 'cathy'], 'start': '2026-09-01', 'end': '2027-01-31', 'budget': 80000, 'progress': 100},
-        {'id': 5, 'title': 'Smart City Traffic Optimization', 'type': 'Innovation', 'status': 'Planning', 'lead': 'innovation', 'team': ['deputy', 'analyst'], 'start': '2026-04-01', 'end': '2027-04-01', 'budget': 1200000, 'progress': 5},
-        {'id': 6, 'title': 'Water Quality Drone Surveillance', 'type': 'Research', 'status': 'Active', 'lead': 'cathy', 'team': [], 'start': '2026-06-15', 'end': '2026-10-30', 'budget': 600000, 'progress': 30},
+        {'id': 5, 'title': 'Smart City Traffic Optimization', 'type': 'Innovation', 'status': 'Planning', 'lead': 'innovation', 'team': ['deputy', 'analyst', 'boyani'], 'start': '2026-04-01', 'end': '2027-04-01', 'budget': 1200000, 'progress': 5},
+        {'id': 6, 'title': 'Water Quality Drone Surveillance', 'type': 'Research', 'status': 'Active', 'lead': 'cathy', 'team': ['boyani'], 'start': '2026-06-15', 'end': '2026-10-30', 'budget': 600000, 'progress': 30},
         {'id': 7, 'title': 'Automated Student Attendance via Biometrics', 'type': 'Pilot', 'status': 'Active', 'lead': 'innovation', 'team': ['cathy'], 'start': '2026-01-10', 'end': '2026-06-30', 'budget': 350000, 'progress': 60},
         {'id': 8, 'title': 'Machine Learning in Disease Prediction', 'type': 'Research', 'status': 'Planning', 'lead': 'director', 'team': ['deputy', 'analyst'], 'start': '2026-05-01', 'end': '2028-12-31', 'budget': 2500000, 'progress': 0},
         {'id': 9, 'title': 'Urban Mobility Tracking', 'type': 'Research', 'status': 'Active', 'lead': 'deputy', 'team': ['karina', 'boyani', 'kemunto', 'faith', 'researcher'], 'start': '2026-02-01', 'end': '2027-02-01', 'budget': 300000, 'progress': 42},
-        {'id': 10, 'title': 'Healthcare AI Policy', 'type': 'Research', 'status': 'Planning', 'lead': 'deputy', 'team': ['karina', 'boyani', 'kemunto', 'faith', 'researcher'], 'start': '2026-05-01', 'end': '2027-05-01', 'budget': 150000, 'progress': 15},
+        {'id': 10, 'title': 'Healthcare AI Policy', 'type': 'Research', 'status': 'Planning', 'lead': 'deputy', 'team': ['karina', 'kemunto', 'faith', 'researcher'], 'start': '2026-05-01', 'end': '2027-05-01', 'budget': 150000, 'progress': 15},
     ]
     
     project_map = {}
