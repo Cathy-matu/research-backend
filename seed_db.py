@@ -44,16 +44,16 @@ def seed():
 
     print("Seeding Projects...")
     projects_data = [
-        {'id': 1, 'title': 'Kibera Sanitation Mapping', 'type': 'Research', 'status': 'Active', 'lead': 'deputy', 'team': ['karina', 'boyani', 'kemunto', 'faith', 'researcher'], 'start': '2024-01-15', 'end': '2024-12-31', 'budget': 450000, 'progress': 65},
-        {'id': 2, 'title': 'AgriSmart Crop Detection', 'type': 'Pilot', 'status': 'Active', 'lead': 'cathy', 'team': [], 'start': '2024-03-01', 'end': '2024-09-30', 'budget': 280000, 'progress': 40},
-        {'id': 3, 'title': 'Mental Health Study', 'type': 'Research', 'status': 'At Risk', 'lead': 'analyst', 'team': [], 'start': '2024-02-01', 'end': '2024-08-31', 'budget': 150000, 'progress': 25},
-        {'id': 4, 'title': 'AI Ethics Training', 'type': 'Training', 'status': 'Completed', 'lead': 'director', 'team': ['deputy', 'cathy'], 'start': '2023-09-01', 'end': '2024-01-31', 'budget': 80000, 'progress': 100},
+        {'id': 1, 'title': 'Kibera Sanitation Mapping', 'type': 'Research', 'status': 'Active', 'lead': 'deputy', 'team': ['karina', 'boyani', 'kemunto', 'faith', 'researcher'], 'start': '2026-01-15', 'end': '2026-12-31', 'budget': 450000, 'progress': 65},
+        {'id': 2, 'title': 'AgriSmart Crop Detection', 'type': 'Pilot', 'status': 'Active', 'lead': 'cathy', 'team': [], 'start': '2026-03-01', 'end': '2026-09-30', 'budget': 280000, 'progress': 40},
+        {'id': 3, 'title': 'Mental Health Study', 'type': 'Research', 'status': 'At Risk', 'lead': 'analyst', 'team': [], 'start': '2026-02-01', 'end': '2026-08-31', 'budget': 150000, 'progress': 25},
+        {'id': 4, 'title': 'AI Ethics Training', 'type': 'Training', 'status': 'Completed', 'lead': 'director', 'team': ['deputy', 'cathy'], 'start': '2026-09-01', 'end': '2027-01-31', 'budget': 80000, 'progress': 100},
         {'id': 5, 'title': 'Smart City Traffic Optimization', 'type': 'Innovation', 'status': 'Planning', 'lead': 'innovation', 'team': ['deputy', 'analyst'], 'start': '2026-04-01', 'end': '2027-04-01', 'budget': 1200000, 'progress': 5},
-        {'id': 6, 'title': 'Water Quality Drone Surveillance', 'type': 'Research', 'status': 'Active', 'lead': 'cathy', 'team': [], 'start': '2025-06-15', 'end': '2026-10-30', 'budget': 600000, 'progress': 30},
-        {'id': 7, 'title': 'Automated Student Attendance via Biometrics', 'type': 'Pilot', 'status': 'Active', 'lead': 'innovation', 'team': ['cathy'], 'start': '2025-01-10', 'end': '2026-06-30', 'budget': 350000, 'progress': 60},
+        {'id': 6, 'title': 'Water Quality Drone Surveillance', 'type': 'Research', 'status': 'Active', 'lead': 'cathy', 'team': [], 'start': '2026-06-15', 'end': '2026-10-30', 'budget': 600000, 'progress': 30},
+        {'id': 7, 'title': 'Automated Student Attendance via Biometrics', 'type': 'Pilot', 'status': 'Active', 'lead': 'innovation', 'team': ['cathy'], 'start': '2026-01-10', 'end': '2026-06-30', 'budget': 350000, 'progress': 60},
         {'id': 8, 'title': 'Machine Learning in Disease Prediction', 'type': 'Research', 'status': 'Planning', 'lead': 'director', 'team': ['deputy', 'analyst'], 'start': '2026-05-01', 'end': '2028-12-31', 'budget': 2500000, 'progress': 0},
-        {'id': 9, 'title': 'Urban Mobility Tracking', 'type': 'Research', 'status': 'Active', 'lead': 'deputy', 'team': ['karina', 'boyani', 'kemunto', 'faith', 'researcher'], 'start': '2025-02-01', 'end': '2026-02-01', 'budget': 300000, 'progress': 42},
-        {'id': 10, 'title': 'Healthcare AI Policy', 'type': 'Research', 'status': 'Planning', 'lead': 'deputy', 'team': ['karina', 'boyani', 'kemunto', 'faith', 'researcher'], 'start': '2025-05-01', 'end': '2026-05-01', 'budget': 150000, 'progress': 15},
+        {'id': 9, 'title': 'Urban Mobility Tracking', 'type': 'Research', 'status': 'Active', 'lead': 'deputy', 'team': ['karina', 'boyani', 'kemunto', 'faith', 'researcher'], 'start': '2026-02-01', 'end': '2027-02-01', 'budget': 300000, 'progress': 42},
+        {'id': 10, 'title': 'Healthcare AI Policy', 'type': 'Research', 'status': 'Planning', 'lead': 'deputy', 'team': ['karina', 'boyani', 'kemunto', 'faith', 'researcher'], 'start': '2026-05-01', 'end': '2027-05-01', 'budget': 150000, 'progress': 15},
     ]
     
     project_map = {}
@@ -91,9 +91,9 @@ def seed():
 
     print("Seeding Tasks...")
     tasks_data = [
-        {'id': 1, 'project_id': 1, 'title': 'Complete field data collection', 'assignee': 'boyani', 'due': '2024-02-15', 'status': 'Done', 'priority': 'High'},
-        {'id': 2, 'project_id': 1, 'title': 'GIS mapping analysis', 'assignee': 'deputy', 'due': '2024-02-28', 'status': 'In Progress', 'priority': 'High'},
-        {'id': 3, 'project_id': 2, 'title': 'Train ML model v2', 'assignee': 'cathy', 'due': '2024-02-10', 'status': 'Overdue', 'priority': 'High'},
+        {'id': 1, 'project_id': 1, 'title': 'Complete field data collection', 'assignee': 'boyani', 'due': '2026-02-15', 'status': 'Done', 'priority': 'High'},
+        {'id': 2, 'project_id': 1, 'title': 'GIS mapping analysis', 'assignee': 'deputy', 'due': '2026-02-28', 'status': 'In Progress', 'priority': 'High'},
+        {'id': 3, 'project_id': 2, 'title': 'Train ML model v2', 'assignee': 'cathy', 'due': '2026-02-10', 'status': 'Overdue', 'priority': 'High'},
         {'id': 4, 'project_id': 2, 'title': 'Finalize Grant Proposal', 'assignee': 'innovation', 'due': '2026-02-25', 'status': 'To Do', 'priority': 'Urgent'},
         {'id': 5, 'project_id': 5, 'title': 'Traffic Data Analysis', 'assignee': 'analyst', 'due': '2026-06-01', 'status': 'To Do', 'priority': 'Medium'},
     ]
@@ -115,7 +115,7 @@ def seed():
             'title': 'Kibera Sanitation GIS Model v1.0',
             'type': 'Prototype',
             'status': 'Approved',
-            'date': '2024-02-10',
+            'date': '2026-02-10',
             'authors': ['deputy', 'karina'],
             'resource_url': 'https://github.com/drice/kibera-gis-model',
             'resource_type': 'Model'
@@ -125,7 +125,7 @@ def seed():
             'title': 'Crop Disease Dataset (Kenya Highands)',
             'type': 'Dataset',
             'status': 'Published',
-            'date': '2024-01-20',
+            'date': '2026-01-20',
             'authors': ['cathy', 'kemunto'],
             'resource_url': 'https://datasets.drice.ac.ke/agrismart-crops-kenya.csv',
             'resource_type': 'Dataset'
@@ -135,9 +135,9 @@ def seed():
             'title': 'AI Ethics in Sub-Saharan Research Contexts',
             'type': 'Paper',
             'status': 'Published',
-            'date': '2024-01-15',
+            'date': '2026-01-15',
             'authors': ['director', 'deputy'],
-            'resource_url': 'https://journal.example.org/ai-ethics-kenya-2024.pdf',
+            'resource_url': 'https://journal.example.org/ai-ethics-kenya-2026.pdf',
             'resource_type': 'Paper'
         },
         {
@@ -145,7 +145,7 @@ def seed():
             'title': 'Water Quality Drone Surveillance Report',
             'type': 'Report',
             'status': 'Draft',
-            'date': '2025-12-01',
+            'date': '2026-12-01',
             'authors': ['cathy', 'faith'],
             'resource_url': 'https://reports.drice.ac.ke/water-quality-drone-q4.pdf',
             'resource_type': 'Report'
