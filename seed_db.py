@@ -6,10 +6,31 @@ from datetime import date, datetime
 def seed():
     from core.models import User, Project, Partner, Task, SubTask, Output, Message, Event
 
-    # Clear existing data
-    User.objects.exclude(is_superuser=True).delete()
-    Project.objects.all().delete()
+    # Clear existing data in reverse order of dependencies
+    from core.models import User, Project, Partner, Task, SubTask, Output, Message, Event, Idea, Innovator, Founder, FounderProject
+    
+    print("Clearing existing data...")
+    # Delete all objects that reference User, in dependency order
+    FounderProject.objects.all().delete()
+    Message.objects.all().delete()
+    SubTask.objects.all().delete()
+    Task.objects.all().delete()
+    Output.objects.all().delete()
+    Partner.objects.all().delete()
     Event.objects.all().delete()
+    Innovator.objects.all().delete()
+    Idea.objects.all().delete()
+    Project.objects.all().delete()
+    
+    # Delete Founder objects that reference non-superuser accounts
+    non_superuser_ids = User.objects.exclude(is_superuser=True).values_list('id', flat=True)
+    Founder.objects.filter(user_id__in=non_superuser_ids).delete()
+    
+    # Now delete users (this should work since Founder references are gone)
+    User.objects.exclude(is_superuser=True).delete()
+    
+    # Clean up any remaining Founder objects
+    Founder.objects.all().delete()
 
     print("Seeding Users...")
     users_data = [
@@ -24,6 +45,7 @@ def seed():
         {'username': 'cathy', 'name': 'Catherine Matu', 'email': 'cathy@drice.ac.ke','role': 'Data Analyst', 'avatar': 'CM'},
         {'username': 'kemunto', 'name': 'Kemunto', 'email': 'kemunto@drice.ac.ke','role': 'Research Assistant', 'avatar': 'KM'},
         {'username': 'faith', 'name': 'Faith', 'email': 'faith@drice.ac.ke','role': 'Research Assistant', 'avatar': 'FA'},
+        {'username': 'founder', 'name': 'Daystar Founder', 'email': 'user@daystar.ac.ke', 'role': 'Research Assistant', 'avatar': 'DF'},
     ]
     
     user_map = {}
@@ -240,6 +262,29 @@ def seed():
         )
         for att in ev['attendees']:
             event.attendees.add(user_map[att])
+
+    print("Seeding Founders...")
+    founder_user = user_map['founder']
+    founder_profile = Founder.objects.create(
+        user=founder_user,
+        name='Daystar Founder',
+        email='user@daystar.ac.ke',
+        bio='Experienced entrepreneur building innovative tech solutions.'
+    )
+
+    print("Seeding Founder Projects...")
+    founder_projects_data = [
+        {'name': 'AgriSense IoT', 'desc': 'IoT sensors for soil moisture tracking', 'stage': 'MVP'},
+        {'name': 'HealthSync', 'desc': 'Rural health clinic data synchronization platform', 'stage': 'Ideation'},
+        {'name': 'EcoWallet', 'desc': 'Mobile payment for recycling management', 'stage': 'Seed'},
+    ]
+    for fp in founder_projects_data:
+        FounderProject.objects.create(
+            founder=founder_profile,
+            project_name=fp['name'],
+            description=fp['desc'],
+            stage=fp['stage']
+        )
 
     print("\nDatabase seeded successfully!")
     print("\n" + "="*50)
