@@ -170,6 +170,7 @@ class Message(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='normal')
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
+    is_read = models.BooleanField(default=False)
 
     class Meta:
         indexes = [
@@ -223,3 +224,38 @@ class Idea(models.Model):
     project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True)
     projects_desc = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+from django.conf import settings
+
+class Founder(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='founder_profile')
+    name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    bio = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+class FounderProject(models.Model):
+    STAGE_CHOICES = (
+        ('Ideation', 'Ideation'),
+        ('MVP', 'MVP'),
+        ('Seed', 'Seed'),
+        ('Scaling', 'Scaling'),
+        ('Series A', 'Series A'),
+    )
+    founder = models.ForeignKey(Founder, on_delete=models.CASCADE, related_name='projects')
+    project_name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    submission_date = models.DateTimeField(auto_now_add=True)
+    stage = models.CharField(max_length=50, choices=STAGE_CHOICES, default='Ideation')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['founder']),
+            models.Index(fields=['stage']),
+        ]
+
+    def __str__(self):
+        return self.project_name

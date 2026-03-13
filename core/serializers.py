@@ -1,11 +1,19 @@
 from rest_framework import serializers
-from .models import User, Project, Task, SubTask, Partner, Output, Message, Event, Innovator, Idea
+from .models import User, Project, Task, SubTask, Partner, Output, Message, Event, Innovator, Idea, Founder, FounderProject
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'avatar', 'password', 'force_password_change']
         extra_kwargs = {'password': {'write_only': True}}
+
+    def validate_email(self, value):
+        role = self.initial_data.get('role')
+        if role == 'Founder' and not value.endswith('@daystar.ac.ke'):
+            raise serializers.ValidationError("Use your @daystar.ac.ke email.")
+        elif role != 'Founder' and not value.endswith('@drice.ac.ke'):
+            raise serializers.ValidationError("Use your @drice.ac.ke email.")
+        return value
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -121,4 +129,36 @@ class IdeaSerializer(serializers.ModelSerializer):
         model = Idea
         fields = ['id', 'owner_name', 'project_title', 'email', 'phone', 'project', 'project_id', 'projects_desc', 'created_at']
         extra_kwargs = {'project': {'read_only': True}}
+
+
+class FounderProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FounderProject
+        fields = ['id', 'project_name', 'description', 'submission_date', 'stage']
+
+
+class FounderSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    projects = FounderProjectSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Founder
+        fields = ['id', 'user', 'name', 'email', 'bio', 'projects', 'created_at']
+
+
+class InnovationOfficerFounderSummarySerializer(serializers.ModelSerializer):
+    project_title = serializers.SerializerMethodField()
+    stage = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Founder
+        fields = ['id', 'name', 'email', 'bio', 'project_title', 'stage']
+
+    def get_project_title(self, obj):
+        project = obj.projects.first()
+        return project.project_name if project else None
+
+    def get_stage(self, obj):
+        project = obj.projects.first()
+        return project.stage if project else None
 

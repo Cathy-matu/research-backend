@@ -205,3 +205,49 @@ class IdeaViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Idea.objects.all()
 
+from .models import Founder, FounderProject
+from .serializers import FounderSerializer, FounderProjectSerializer, InnovationOfficerFounderSummarySerializer
+
+class FounderProfileViewSet(viewsets.ModelViewSet):
+    queryset = Founder.objects.all()
+    serializer_class = FounderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # A Founder should ideally only see their own profile unless they are an admin/officer
+        user = self.request.user
+        if user.role in ['Admin', 'Innovation Officer', 'Director']:
+            return Founder.objects.all()
+        return Founder.objects.filter(user=user)
+
+class FounderProjectViewSet(viewsets.ModelViewSet):
+    queryset = FounderProject.objects.all()
+    serializer_class = FounderProjectSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role in ['Admin', 'Innovation Officer', 'Director']:
+            return FounderProject.objects.all().select_related('founder')
+        return FounderProject.objects.filter(founder__user=user)
+
+    def perform_create(self, serializer):
+        # Automatically link the project to the logged-in user's founder profile
+        founder = Founder.objects.get(user=self.request.user)
+        serializer.save(founder=founder)
+
+class InnovationOfficerFounderViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Optimized endpoint for the Innovation Officer dashboard.
+    Uses prefetch_related for O(1) database queries on the list view.
+    """
+    queryset = Founder.objects.prefetch_related('projects').all()
+    serializer_class = InnovationOfficerFounderSummarySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role in ['Innovation Officer', 'Admin', 'Director']:
+            return self.queryset
+        return Founder.objects.none()
+

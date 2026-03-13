@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     UserMeView, ChangePasswordView, UserViewSet, ProjectViewSet, TaskViewSet, 
     PartnerViewSet, OutputViewSet, MessageViewSet, EventViewSet,
-    InnovatorViewSet, IdeaViewSet
+    InnovatorViewSet, IdeaViewSet, FounderProfileViewSet, FounderProjectViewSet, InnovationOfficerFounderViewSet
 )
 
 router = DefaultRouter()
@@ -16,6 +16,9 @@ router.register(r'messages', MessageViewSet, basename='message')
 router.register(r'events', EventViewSet, basename='event')
 router.register(r'innovator', InnovatorViewSet, basename='innovator')
 router.register(r'idea', IdeaViewSet, basename='idea')
+router.register(r'founders/my-profile', FounderProfileViewSet, basename='founder-profile')
+router.register(r'founders/my-projects', FounderProjectViewSet, basename='founder-projects')
+router.register(r'founders/officer-summary', InnovationOfficerFounderViewSet, basename='officer-summary')
 
 urlpatterns = [
     path('me/', UserMeView.as_view(), name='user-me'),
