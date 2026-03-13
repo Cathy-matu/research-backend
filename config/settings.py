@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'django_filters',
+    'anymail',
     # Local apps
     'core',
     'integration',
@@ -89,6 +90,14 @@ if db_url and db_url.strip():
     except Exception as e:
         print(f"Failed to parse DATABASE_URL: {e}")
 
+import sys
+if 'test' in sys.argv:
+    print("Using sqlite3 database for testing")
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:'
+    }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -135,17 +144,27 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-# Email Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST')
+# Email Configuration using Anymail + Mailtrap
+ANYMAIL = {
+    'MAILTRAP_API_KEY': os.getenv('MAILTRAP_API_KEY', ''),
+}
+EMAIL_BACKEND = 'anymail.backends.mailtrap.EmailBackend'
+DEFAULT_FROM_EMAIL = "notifications@researchintelligence.com"
 
-if EMAIL_HOST:
-    EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
-else:
-    # Fallback to console if no SMTP credentials are provided, good for testing
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    DEFAULT_FROM_EMAIL = 'no-reply@researchdashboard.local'
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379' 
+CELERY_RESULT_BACKEND = 'django-db'  
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Nairobi'
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'  
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'catherinewmatu01@gmail.com'
+EMAIL_HOST_PASSWORD = 'opiabjbpkwqleqwi'  
+DEFAULT_FROM_EMAIL = 'catherinewmatu01@gmail.com'                         
